@@ -35,7 +35,10 @@ app.use(session({
     secret: node_session_secret,
 	store: mongoStore, //default is memory store 
 	saveUninitialized: false, 
-	resave: true
+	resave: true,
+    cookie: {
+        maxAge: 1000 * 60 * 60 // 1 hour
+      }
 }
 ));
 
@@ -86,15 +89,21 @@ app.post('/submitUser', (req, res) => {
   
       console.log(users);
   
-      var usershtml = "";
-      for (i = 0; i < users.length; i++) {
-        usershtml += `<li>Username: ${users[i].username} Email: ${users[i].email} Password: ${users[i].password}</li>`;
-      }
+    //   var usershtml = "";
+    //   for (i = 0; i < users.length; i++) {
+    //     usershtml += `<li>Username: ${users[i].username} Email: ${users[i].email} Password: ${users[i].password}</li>`;
+    //   }
   
-      var html = "<ul>" + usershtml + "</ul>";
-      res.send(html);
+    //   var html = "<ul>" + usershtml + "</ul>";
+    req.session.authenticated = true;
+    req.session.username = username;
+  
+    res.redirect('/members');
+    //   res.send(html);
     }
   });
+
+
   
   
   
@@ -145,32 +154,20 @@ app.get('/login', (req,res) => {
 
 
 
-// app.get('/login', (req,res) => {
-//     var html = `
-//     log in
-//     <form action='/loggingin' method='post'>
-//     <input name='email' type='email' placeholder='email'>
-//     <input name='password' type='password' placeholder='password'>
-//     <button>Submit</button>
-//     </form>
-//     `;
-//     res.send(html);
-// });
-
 app.post('/loggingin', (req,res) => {
-    var username = req.body.username;
+    var email = req.body.email;
     var password = req.body.password;
 
 
     var usershtml = "";
     for (i = 0; i < users.length; i++) {
-        if (users[i].username == username) {
+        if (users[i].email == email) {
             if (bcrypt.compareSync(password, users[i].password)) {
                 req.session.authenticated = true;
-                req.session.username = username;
+                req.session.email = email;
                 req.session.cookie.maxAge = expireTime;
         
-                res.redirect('/loggedIn');
+                res.redirect('/members');
                 return;
             }
         }
@@ -180,34 +177,19 @@ app.post('/loggingin', (req,res) => {
     res.redirect("/login?error=User and password not found");});
 
 
-app.get('/loggedin', (req,res) => {
+app.get('/members', (req,res) => {
     if (!req.session.authenticated) {
-        res.redirect('/login');
+        res.redirect('/');
     }
+    var images = ['matopos.jpg', 'sahara.jpg', 'vicfalls.jpg'];
+    var randomIndex = Math.floor(Math.random() * images.length);
     var html = `
-    You are logged in!
+    <h1>Hello, ${req.session.username}</h1>
+    <img src="${images[randomIndex]}" />
+    <br><br>
+    <button onclick="window.location.href='/'">Sign Out</button>
     `;
     res.send(html);
-});
-
-
-
-
-
-
-app.get('/cat/:id', (req,res) => {
-
-    var cat = req.params.id;
-
-    if (cat == 1) {
-        res.send("Fluffy: <img src='/fluffy.gif' style='width:250px;'>");
-    }
-    else if (cat == 2) {
-        res.send("Socks: <img src='/socks.gif' style='width:250px;'>");
-    }
-    else {
-        res.send("Invalid cat id: "+cat);
-    }
 });
 
 
