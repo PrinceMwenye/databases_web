@@ -52,7 +52,10 @@ app.get('/', (req,res) => {
 
 
 app.get('/createUser', (req,res) => {
+    var errorMessage = req.query.error;
+
     var html = `
+    ${errorMessage ? '<p style="color:red">' + errorMessage + '</p>' : ''}
     create user
     <form action='/submitUser' method='post'>
     <input name='username' type='text' placeholder='username'>
@@ -80,7 +83,9 @@ app.post('/submitUser', (req, res) => {
        if (!password) {
         errorMessage += "Please provide a password. ";
       }
-      return res.redirect('/createUser?message=' + errorMessage)    }
+      res.redirect('/createUser?message=' + errorMessage) 
+      
+       }
       
       else {
       var hashedPassword = bcrypt.hashSync(password, saltRounds);
@@ -89,29 +94,16 @@ app.post('/submitUser', (req, res) => {
   
       console.log(users);
   
-    //   var usershtml = "";
-    //   for (i = 0; i < users.length; i++) {
-    //     usershtml += `<li>Username: ${users[i].username} Email: ${users[i].email} Password: ${users[i].password}</li>`;
-    //   }
   
-    //   var html = "<ul>" + usershtml + "</ul>";
     req.session.authenticated = true;
     req.session.username = username;
   
     res.redirect('/members');
-    //   res.send(html);
     }
   });
 
 
-  
-  
-  
-app.get('/about', (req,res) => {
-    var color = req.query.color;
 
-    res.send("<h1 style='color:"+color+";'>Patrick Guichon</h1>");
-});
 
 app.get('/contact', (req,res) => {
     var missingEmail = req.query.missing;
