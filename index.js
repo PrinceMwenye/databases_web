@@ -184,21 +184,15 @@ app.post('/loggingin', (req,res) => {
     res.redirect("/login?error=User and password not found");});
 
 
-    app.get('/members', (req, res) => {
+    app.get('/members', function(req, res) {
         if (!req.session.authenticated) {
-          res.redirect('/');
+            res.redirect('/');
         } else {
-          var images = ['matopos.jpg', 'sahara.jpg', 'vicfalls.jpg'];
-          var randomIndex = Math.floor(Math.random() * images.length);
-          var data = {
-            username: req.session.username,
-            image: images[randomIndex]
-          };
-          res.render('members', { data });
+            res.render('members', {username: req.session.username, image: req.session.image, session: req.session});
         }
-      });
-
-
+    });
+    
+      
 app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req,res) => {
