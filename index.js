@@ -1,9 +1,17 @@
+require('./utils');
+
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
+
+
+
+const database = include('databaseConnection');
+const db_utils = include('database/db_utils');
+const success = db_utils.printMySQLVersion();
 
 const port = process.env.PORT || 3000;
 
@@ -140,6 +148,19 @@ app.post('/submitEmail', (req,res) => {
 });
 
 
+app.get('/createTables', async (req,res) => {
+
+    const create_tables = include('database/create_tables');
+
+    var success = create_tables.createTables();
+    if (success) {
+        res.render("successMessage", {message: "Created tables."} );
+    }
+    else {
+        res.render("errorMessage", {error: "Failed to create tables."} );
+    }
+});
+
 app.get('/login', (req, res) => {
     const errorMessage = req.query.error;
     res.render('login', { title: 'Login', errorMessage });
@@ -197,7 +218,7 @@ app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req,res) => {
 	res.status(404);
-	res.send("Page not found - 404");
+	res.render("404");
 })
 
 app.listen(port, () => {
