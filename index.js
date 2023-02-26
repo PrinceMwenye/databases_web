@@ -151,7 +151,6 @@ app.post('/submitEmail', (req,res) => {
 app.get('/createTables', async (req,res) => {
 
     const create_tables = include('database/create_tables');
-
     var success = create_tables.createTables();
     if (success) {
         res.render("successMessage", {message: "Created tables."} );

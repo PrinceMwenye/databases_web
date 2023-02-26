@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Create User</title>
-</head>
-<body>
-    <% if (errorMessage) { %>
-        <p style="color:red"><%= errorMessage %></p>
-    <% } %>
+<%- include("templates/header") %> 
     create user
-    <form action="/submitUser" method="post">
-        <input name="username" type="text" placeholder="username">
+    <form action='/submitUser' method='post'>
         <input name="email" type="email" placeholder="email">
-        <input name="password" type="password" placeholder="password">
-        <button>Submit</button>
+    <input name='username' type='text' placeholder='username'>
+    <input name='password' type='password' placeholder='password'>
+    <button>Submit</button>
     </form>
-</body>
-</html>
+<%- include("templates/footer") %> 
