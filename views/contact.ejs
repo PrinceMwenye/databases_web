@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+</head>
+<body>
+    email address:
+    <form action="/submitEmail" method="post">
+        <input name="email" type="text" placeholder="email">
+        <button>Submit</button>
+    </form>
+    <% if (missingEmail) { %>
+        <br> email is required
+    <% } %>
+</body>
+</html>

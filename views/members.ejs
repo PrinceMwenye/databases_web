@@ -1,0 +1,16 @@
+<% if (!session.authenticated) { %>
+    <% res.redirect('/'); %>
+  <% } %>
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Members</title>
+  </head>
+  <body>
+    <h1>Hello, <%= session.username %></h1>
+    <img src="<%= images[Math.floor(Math.random() * images.length)] %>" />
+    <br><br>
+    <button onclick="window.location.href='/';">Sign Out</button>
+  </body>
+  </html>
+  
