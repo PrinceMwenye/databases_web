@@ -30,7 +30,7 @@ async function createUser(postData) {
 
 async function getUsers(postData) {
 	let getUsersSQL = `
-		SELECT username, email, password
+		SELECT username, password
 		FROM user;
 	`;
 	
@@ -48,4 +48,29 @@ async function getUsers(postData) {
 	}
 }
 
-module.exports = {createUser, getUsers};
+async function getUser(postData) {
+	let getUserSQL = `
+		SELECT user_id, email, password
+		FROM user
+		WHERE email = :user;
+	`;
+
+	let params = {
+		user: postData.user
+	}
+	
+	try {
+		const results = await database.query(getUserSQL, params);
+
+        console.log("Successfully found user");
+		console.log(results[0]);
+		return results[0];
+	}
+	catch(err) {
+		console.log("Error trying to find user");
+        console.log(err);
+		return false;
+	}
+}
+
+module.exports = {createUser, getUsers, getUser};

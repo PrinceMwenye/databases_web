@@ -66,6 +66,9 @@ app.get('/createUser', (req, res) => {
     res.render('createUser', { title: 'Create User', errorMessage });
   });
 
+
+
+
 // app.get('/createUser', (req,res) => {
 //     var errorMessage = req.query.error;
 
@@ -109,20 +112,7 @@ app.post('/submitUser', async (req,res) => {
     
   });
 
-// app.get('/contact', (req,res) => {
-//     var missingEmail = req.query.missing;
-//     var html = `
-//         email address:
-//         <form action='/submitEmail' method='post'>
-//             <input name='email' type='text' placeholder='email'>
-//             <button>Submit</button>
-//         </form>
-//     `;
-//     if (missingEmail) {
-//         html += "<br> email is required";
-//     }
-//     res.send(html);
-// });
+
 
 // app.post('/submitEmail', (req,res) => {
 //     var email = req.body.email;
@@ -152,43 +142,49 @@ app.get('/login', (req, res) => {
     res.render('login', { title: 'Login', errorMessage });
   });
 
-// app.get('/login', (req,res) => {
-//     var errorMessage = req.query.error;
-//     var html = `
-//     <h1>Login</h1>
-//     ${errorMessage ? '<p style="color:red">' + errorMessage + '</p>' : ''}
-//     <form action='/loggingin' method='post'>
-//     <input name='email' type='email' placeholder='email'>
-//     <input name='password' type='password' placeholder='password'>
-//     <button>Submit</button>
-//     </form>
-//     `;
-//     res.send(html);
-// });
 
 
 
-app.post('/loggingin', (req,res) => {
+
+  app.post('/loggingin', async (req,res) => {
     var email = req.body.email;
     var password = req.body.password;
 
 
-    var usershtml = "";
-    for (i = 0; i < users.length; i++) {
-        if (users[i].email == email) {
-            if (bcrypt.compareSync(password, users[i].password)) {
+    var results = await db_users.getUser({ user: email, hashedPassword: password });
+
+    if (results) {
+        if (results.length == 1) { //there should only be 1 user in the db that matches
+            if (bcrypt.compareSync(password, results[0].password)) {
                 req.session.authenticated = true;
                 req.session.email = email;
                 req.session.cookie.maxAge = expireTime;
         
-                res.redirect('/members');
+                res.redirect('/todo');
                 return;
             }
+            else {
+                console.log("invalid password");
+            }
+        }
+        else {
+            console.log('invalid number of users matched: '+results.length+" (expected 1).");
+            res.redirect('/login');
+            return;            
         }
     }
 
+    console.log('user not found');
     //user and password combination not found
-    res.redirect("/login?error=User and password not found");});
+    res.redirect("/login");
+});
+
+app.get('/todo', (req,res) => {
+    if (!req.session.authenticated) {
+        res.redirect('/login');
+    }
+    res.render("todo");
+});
 
 
     app.get('/members', function(req, res) {
