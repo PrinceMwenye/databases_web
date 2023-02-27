@@ -9,7 +9,7 @@
   <h2>Your Todos:</h2>
   <ul>
     <% todos.forEach(function(todo) { %>
-      <li><%= todo.title %>: <%= todo.description %> (completed: <%= todo.completed %>)</li>
+      <li><%= todo.title %> <%= todo.description %> <%= todo.completed %></li>
     <% }); %>
   </ul>
 

@@ -76,9 +76,11 @@ async function getUser(postData) {
 async function getTodos(postData) {
 	let getTodosSQL = `
 
-	SELECT description FROM user
-	INNER JOIN todo ON
-	user.user_id = todo.frn_user_id
+
+	SELECT td.description FROM user us
+	INNER JOIN todo td
+	 ON
+	us.user_id = td.frn_user_id
 	WHERE email = :user;
 	`;
   
@@ -90,7 +92,6 @@ async function getTodos(postData) {
 	  const results = await database.query(getTodosSQL, params);
   
 	  console.log("Successfully retrieved todos");
-	  console.log(postData.user)
 	  console.log(results[0]);
 	  return results[0];
 	} catch (err) {

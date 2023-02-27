@@ -96,6 +96,7 @@ app.post('/submitUser', async (req,res) => {
 
     if (success) {
         var results = await db_users.getUsers();
+        console.log(results)
 
         res.render("todo",{users:results});
     }
@@ -158,6 +159,7 @@ app.get('/login', (req, res) => {
             if (bcrypt.compareSync(password, results[0].password)) {
                 req.session.authenticated = true;
                 req.session.email = email;
+                req.session.user_id = results[0].user_id;
                 req.session.cookie.maxAge = expireTime;
         
                 res.redirect('/todo');
@@ -184,7 +186,7 @@ app.get('/todo', async (req, res) => {
       res.redirect('/login');
     } else {
       const userEmail = req.session.email;
-      const userTodos = await db_users.getTodos(userEmail);
+      const userTodos = await db_users.getTodos({user:userEmail});
       console.log(userTodos);
       console.log(userEmail);
 
@@ -193,32 +195,6 @@ app.get('/todo', async (req, res) => {
   });
 
 
-//   app.post('/todo', async (req, res) => {
-//     // Extract the todo information from the request body
-//     // const { title, description } = req.body;
-//     const user_id = req.session.user_id;
-//     const todoData = {
-//         description: req.body.description,
-//         user_id: user_id
-//       };
-//     // Get the user's email address from the session
-//     const userEmail = req.session.email;
-  
-//     // Insert the new todo item into the database
-//     try {
-//       await db_users.createTodo({
-//         title,
-//         description,
-//         email: userEmail
-//       });
-  
-//       // Redirect the user back to the todo page
-//       res.redirect('/todo');
-//     } catch (error) {
-//       console.log(error);
-//       res.status(500).send('Internal server error');
-//     }
-//   });
   
 app.post('/todo', async (req, res) => {
 
