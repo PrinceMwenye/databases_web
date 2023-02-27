@@ -11,6 +11,8 @@ const saltRounds = 12;
 
 const database = include('databaseConnection');
 const db_utils = include('database/db_utils');
+const db_users = include('database/users');
+
 const success = db_utils.printMySQLVersion();
 
 const port = process.env.PORT || 3000;
@@ -80,40 +82,25 @@ app.get('/createUser', (req, res) => {
 //     res.send(html);
 // });
 
-app.post('/submitUser', (req, res) => {
+app.post('/submitUser', async (req,res) => {
     var username = req.body.username;
-    var email = req.body.email;
     var password = req.body.password;
-  
-    if (!username || !email || !password) {
-      var errorMessage = "";
-      if (!username) {
-        errorMessage += "Please provide a username. ";
-      }
-       if (!email) {
-        errorMessage += "Please provide an email. ";
-      }
-       if (!password) {
-        errorMessage += "Please provide a password. ";
-      }
-      res.redirect('/createUser?message=' + errorMessage) 
-      
-       }
-      
-      else {
-      var hashedPassword = bcrypt.hashSync(password, saltRounds);
-  
-      users.push({ username: username, email: email, password: hashedPassword });
-  
-      console.log(users);
-  
-  
-    req.session.authenticated = true;
-    req.session.username = username;
-  
-    res.redirect('/members');
+    var email = req.body.email;
+
+    var hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+    var success = await db_users.createUser({ user: username, email:email, hashedPassword: hashedPassword });
+
+    if (success) {
+        var results = await db_users.getUsers();
+
+        res.render("submitUser",{users:results});
     }
-  });
+    else {
+        res.render("errorMessage", {error: "Failed to create user."} );
+    }
+
+});
 
 
   app.get('/contact', (req, res) => {
@@ -137,15 +124,15 @@ app.post('/submitUser', (req, res) => {
 //     res.send(html);
 // });
 
-app.post('/submitEmail', (req,res) => {
-    var email = req.body.email;
-    if (!email) {
-        res.redirect('/contact?missing=1');
-    }
-    else {
-        res.send("Thanks for subscribing with your email: "+email);
-    }
-});
+// app.post('/submitEmail', (req,res) => {
+//     var email = req.body.email;
+//     if (!email) {
+//         res.redirect('/contact?missing=1');
+//     }
+//     else {
+//         res.send("Thanks for subscribing with your email: "+email);
+//     }
+// });
 
 
 app.get('/createTables', async (req,res) => {
