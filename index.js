@@ -94,7 +94,7 @@ app.post('/submitUser', async (req,res) => {
     if (success) {
         var results = await db_users.getUsers();
 
-        res.render("submitUser",{users:results});
+        res.render("todo",{users:results});
     }
     else {
         res.render("errorMessage", {error: "Failed to create user."} );
