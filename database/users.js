@@ -73,4 +73,65 @@ async function getUser(postData) {
 	}
 }
 
-module.exports = {createUser, getUsers, getUser};
+async function getTodos(postData) {
+	let getTodosSQL = `
+
+	SELECT description FROM user
+	INNER JOIN todo ON
+	user.user_id = todo.frn_user_id
+	WHERE email = :user;
+	`;
+  
+	let params = {
+		user: postData.user
+	}
+  
+	try {
+	  const results = await database.query(getTodosSQL, params);
+  
+	  console.log("Successfully retrieved todos");
+	  console.log(postData.user)
+	  console.log(results[0]);
+	  return results[0];
+	} catch (err) {
+	  console.log("Error getting todos");
+	  console.log(err);
+	  return false;
+	}
+  }
+  
+
+  async function createTodo(postData) {
+	let createTodoSQL = `
+	  INSERT INTO todo
+	  (description, frn_user_id)
+	  VALUES
+	  (:description, (
+		SELECT user_id
+		FROM user
+		WHERE email = :user
+	  ));
+	`;
+	
+	let params = {
+	  description: postData.description,
+	  user: postData.user
+	}
+	
+	try {
+	  const results = await database.query(createTodoSQL, params);
+	
+	  console.log("Successfully created todo");
+	  console.log(results[0]);
+	  return true;
+	} catch (err) {
+	  console.log("Error inserting todo");
+	  console.log(err);
+	  return false;
+	}
+  }
+  
+  
+  
+  
+module.exports = {createUser, getUsers, getUser, getTodos,  createTodo};

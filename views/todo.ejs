@@ -1,14 +1,23 @@
-<div id="myDIV" class="header">
-    <h2>My To Do List</h2>
-    <input type="text" id="myInput" placeholder="Title...">
-    <span onclick="newElement()" class="addBtn">Add</span>
-  </div>
-  
-  <ul id="myUL">
-    <li>Hit the gym</li>
-    <li class="checked">Pay bills</li>
-    <li>Meet George</li>
-    <li>Buy eggs</li>
-    <li>Read a book</li>
-    <li>Organize office</li>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo List</title>
+</head>
+<body>
+  <h1>Hello <%= userEmail %>!</h1>
+
+  <h2>Your Todos:</h2>
+  <ul>
+    <% todos.forEach(function(todo) { %>
+      <li><%= todo.title %>: <%= todo.description %> (completed: <%= todo.completed %>)</li>
+    <% }); %>
   </ul>
+
+  <h2>Create a New Todo:</h2>
+  <form method="POST" action="/todo">
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description"><br>
+    <input type="submit" value="Add Todo">
+  </form>
+</body>
+</html>

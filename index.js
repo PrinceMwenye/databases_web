@@ -179,23 +179,63 @@ app.get('/login', (req, res) => {
     res.redirect("/login");
 });
 
-app.get('/todo', (req,res) => {
+app.get('/todo', async (req, res) => {
     if (!req.session.authenticated) {
-        res.redirect('/login');
+      res.redirect('/login');
+    } else {
+      const userEmail = req.session.email;
+      const userTodos = await db_users.getTodos(userEmail);
+      console.log(userTodos);
+      console.log(userEmail);
+
+      res.render("todo", { userEmail, todos:userTodos });
     }
-    res.render("todo");
-});
+  });
 
 
-    app.get('/members', function(req, res) {
-        if (!req.session.authenticated) {
-            res.redirect('/');
-        } else {
-            res.render('members', {username: req.session.username, image: req.session.image, session: req.session});
-        }
-    });
-    
-      
+//   app.post('/todo', async (req, res) => {
+//     // Extract the todo information from the request body
+//     // const { title, description } = req.body;
+//     const user_id = req.session.user_id;
+//     const todoData = {
+//         description: req.body.description,
+//         user_id: user_id
+//       };
+//     // Get the user's email address from the session
+//     const userEmail = req.session.email;
+  
+//     // Insert the new todo item into the database
+//     try {
+//       await db_users.createTodo({
+//         title,
+//         description,
+//         email: userEmail
+//       });
+  
+//       // Redirect the user back to the todo page
+//       res.redirect('/todo');
+//     } catch (error) {
+//       console.log(error);
+//       res.status(500).send('Internal server error');
+//     }
+//   });
+  
+app.post('/todo', async (req, res) => {
+
+    const userEmail = req.session.email;
+    var description = req.body.description;
+
+
+    var result = await db_users.createTodo({ user: userEmail,  description:description });
+    if (result) {
+      res.redirect('/todo');
+    } else {
+      res.send('Error creating todo');
+    }
+  });
+  
+
+
 app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req,res) => {
