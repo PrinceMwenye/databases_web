@@ -88,11 +88,11 @@ app.get('/createUser', (req, res) => {
 app.post('/submitUser', async (req,res) => {
     var username = req.body.username;
     var password = req.body.password;
-    var email = req.body.email;
+    var userEmail = req.body.email;
 
     var hashedPassword = bcrypt.hashSync(password, saltRounds);
 
-    var success = await db_users.createUser({ user: username, email:email, hashedPassword: hashedPassword });
+    var success = await db_users.createUser({ user: username, email:userEmail, hashedPassword: hashedPassword });
 
     if (success) {
         var results = await db_users.getUsers();
@@ -115,15 +115,6 @@ app.post('/submitUser', async (req,res) => {
 
 
 
-// app.post('/submitEmail', (req,res) => {
-//     var email = req.body.email;
-//     if (!email) {
-//         res.redirect('/contact?missing=1');
-//     }
-//     else {
-//         res.send("Thanks for subscribing with your email: "+email);
-//     }
-// });
 
 
 app.get('/createTables', async (req,res) => {
@@ -150,8 +141,6 @@ app.get('/login', (req, res) => {
   app.post('/loggingin', async (req,res) => {
     var email = req.body.email;
     var password = req.body.password;
-
-
     var results = await db_users.getUser({ user: email, hashedPassword: password });
 
     if (results) {
@@ -189,7 +178,6 @@ app.get('/todo', async (req, res) => {
       const userTodos = await db_users.getTodos({user:userEmail});
       console.log(userTodos);
       console.log(userEmail);
-
       res.render("todo", { userEmail, todos:userTodos });
     }
   });
