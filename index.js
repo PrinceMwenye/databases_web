@@ -198,8 +198,9 @@ app.get('/todo', async (req, res) => {
       const userEmail = req.session.email;
       const userDetails = await db_users.getUser({user:userEmail});
       const userName = userDetails[0].username
+      const userTypeID = userDetails[0].frn_user_type_id
       const userTodos = await db_users.getTodos({user:userEmail});
-      const isAdmin = (req.session.user_id == 1)
+      const isAdmin = (userTypeID == 1)
       // console.log(userName[0].username);
       res.render("todo", { userName, isAdmin, todos:userTodos });
     }
@@ -208,14 +209,21 @@ app.get('/todo', async (req, res) => {
   app.get('/admin', async (req, res) => {
 
     if (!req.session.authenticated) {
+      // if not authenticated then redirect to login
       res.redirect('/login');
     } else {
+      const userEmail = req.session.email;
+      const userDetails = await db_users.getUser({user:userEmail});
+      const userTypeID = userDetails[0].frn_user_type_id
+      // check if admin
+      if (userTypeID == 1){
+        const userNames = await db_users.getUsers();
+        // console.log(userEmail);
+        res.render("admin", {userNames});
+      } else{
+        res.redirect('/todo');
 
-      const userNames = await db_users.getUsers();
-      console.log("CURRENT USERS ARE")
-      console.log(userNames);
-      // console.log(userEmail);
-      res.render("admin", {userNames});
+      }
     }
   });
   
@@ -224,13 +232,15 @@ app.get('/todo', async (req, res) => {
     if (!req.session.authenticated) {
       res.redirect('/login');
     } else {
-      const userEmail = req.session.email;
       const id = req.params.id;
       console.log("CURRENT ID" + id);
-      const isAdmin = (req.session.user_id == 1)
-      console.log(isAdmin)
+      const userDetails = await db_users.getUser({user:id});
+      const userTypeID = userDetails[0].frn_user_type_id;
+      console.log("Redirected user" + userTypeID)
+      const isAdmin = (userTypeID != 1);
+      const userName = userDetails[0].username;
       const userTodos = await db_users.getTodoAdmin({userid: id});
-      res.render("todo", {id, userEmail, todos: userTodos, isAdmin});
+      res.render("todo", { userName, isAdmin, todos:userTodos });
     }
   });
 

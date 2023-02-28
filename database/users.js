@@ -49,11 +49,34 @@ async function getUsers() {
 }
 
 
+async function checkUserType(postData){
+	let getUserSQL = `
+		SELECT frn_user_type_id FROM
+		user
+		WHERE user_id = :user_type_id;
+	`;
+
+	let params = {
+		user_type_id: postData.userid
+	}
+	try {
+		const results = await database.query(getUserSQL, params);
+
+		console.log("CURRENT USER TYPE" +results[0]);
+		return results[0];
+	}
+	catch(err) {
+        console.log(err);
+		return false;
+	}
+	
+}
+
 async function getUser(postData) {
 	let getUserSQL = `
 		SELECT user_id, username,  email, password, frn_user_type_id
 		FROM user
-		WHERE email = :user;
+		WHERE email = :user OR user_id = :user;
 	`;
 
 	let params = {
@@ -163,4 +186,4 @@ async function getTodos(postData) {
   
   
   
-module.exports = {createUser, getUsers, getUser, getTodos,  createTodo, getTodoAdmin};
+module.exports = {createUser, getUsers, getUser, getTodos,  createTodo, getTodoAdmin, checkUserType};

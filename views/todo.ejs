@@ -4,7 +4,17 @@
   <title>Todo List</title>
 </head>
 <body>
-  <h1>Hello <%= userName %>!</h1>
+
+  <% if (!isAdmin) { %>
+    <h1>Hello <%= userName %>!</h1>
+
+  <% } %>
+
+  <% if (isAdmin) { %>
+    <h2>Logged in as Admin</h2>
+    <h2>Todos for <%= userName %>:</h2>
+  <% } %>
+
 
   <h2>Your Todos:</h2>
   <ul>
