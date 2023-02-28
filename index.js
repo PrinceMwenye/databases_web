@@ -67,32 +67,64 @@ app.get('/createUser', (req, res) => {
   });
 
 
-
-
-app.post('/submitUser', async (req,res) => {
-    var username = req.body.username;
-    var password = req.body.password;
-    var userEmail = req.body.email;
-
-    var hashedPassword = bcrypt.hashSync(password, saltRounds);
-
-    var success = await db_users.createUser({ user: username, email:userEmail, hashedPassword: hashedPassword });
-
+  app.post('/submitUser', async (req, res) => {
+    const { username, password, email: userEmail } = req.body;
+  
+    // Check if any of the required fields are missing
+    if (!username || !password || !userEmail) {
+      const missingFields = [];
+      if (!username) missingFields.push('Username');
+      if (!password) missingFields.push('Password');
+      if (!userEmail) missingFields.push('Email');
+      const errorMessage = `Missing required field(s): ${missingFields.join(', ')}.`;
+      return res.render('errorMessage', { error: errorMessage });
+    }
+  
+    const hashedPassword = bcrypt.hashSync(password, saltRounds);
+    const success = await db_users.createUser({ user: username, email: userEmail, hashedPassword });
+  
     if (success) {
       req.session.authenticated = true;
       req.session.email = userEmail;
-      // req.session.user_id = results[0].user_id;
-      req.session.cookie.maxAge = expireTime;
+      const isAdmin = false;
+      const userDetails = await db_users.getUser({user:userEmail});
+      const userName = userDetails[0].username
+      
+      const userTodos = await db_users.getTodos({ user: userEmail });
+      res.render("todo", { userName, isAdmin, todos:userTodos });
 
-      const userTodos = await db_users.getTodos({user:userEmail});
-      res.render("todo", { userEmail, todos:userTodos });
-        // res.render("todo", {userEmail:results[0].user});
+      // res.render('todo', { userEmail, todos: userTodos });
+    } else {
+      res.render('errorMessage', { error: 'Failed to create user.' });
     }
-    else {
-        res.render("errorMessage", {error: "Failed to create user."} );
-    }
+  });
+  
 
-});
+
+
+// app.post('/submitUser', async (req,res) => {
+//     var username = req.body.username;
+//     var password = req.body.password;
+//     var userEmail = req.body.email;
+
+//     var hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+//     var success = await db_users.createUser({ user: username, email:userEmail, hashedPassword: hashedPassword });
+
+//     if (success) {
+//       req.session.authenticated = true;
+//       req.session.email = userEmail;
+//       // req.session.user_id = results[0].user_id;
+//       req.session.cookie.maxAge = expireTime;
+
+//       const userTodos = await db_users.getTodos({user:userEmail});
+//       res.render("todo", { userEmail, todos:userTodos });
+//     }
+//     else {
+//         res.render("errorMessage", {error: "Failed to create user."} );
+//     }
+
+// });
 
 
   app.get('/contact', (req, res) => {
