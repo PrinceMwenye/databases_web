@@ -224,9 +224,11 @@ app.get('/todo', async (req, res) => {
     } else {
       const userEmail = req.session.email;
       const id = req.params.id;
-      console.log("CURRENT ID" + id)
+      console.log("CURRENT ID" + id);
+      const isAdmin = (req.session.user_id == 2)
+      console.log(isAdmin)
       const userTodos = await db_users.getTodoAdmin({userid: id});
-      res.render("todo", {id, userEmail, todos: userTodos});
+      res.render("todo", {id, userEmail, todos: userTodos, isAdmin});
     }
   });
 
