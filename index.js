@@ -122,7 +122,6 @@ app.get('/login', (req, res) => {
     res.render('login', { title: 'Login', errorMessage });
   });
 
--
 
   app.post('/loggingin', async (req,res) => {
     var email = req.body.email;
@@ -170,7 +169,7 @@ app.get('/login', (req, res) => {
 
     console.log('user not found');
     //user and password combination not found
-    res.redirect("/login");
+    res.redirect('/login?error=Invalid email or password');
 });
 
 app.get('/todo', async (req, res) => {

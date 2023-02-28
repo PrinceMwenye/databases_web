@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Todo List</title>
-</head>
-<body>
+<%- include("templates/header") %> 
+
 
   <% if (!isAdmin) { %>
     <h1  style="color: red;">Hello <%= userName %>!</h1>
@@ -30,5 +26,4 @@
       <button type="submit">Add</button>
     </form>
   <% } %>
-</body>
-</html>
+  <%- include("templates/footer") %> 
