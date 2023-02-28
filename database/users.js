@@ -50,7 +50,7 @@ async function getUsers(postData) {
 
 async function getUser(postData) {
 	let getUserSQL = `
-		SELECT user_id, email, password
+		SELECT user_id, email, password, frn_user_type_id
 		FROM user
 		WHERE email = :user;
 	`;

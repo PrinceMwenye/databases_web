@@ -149,14 +149,31 @@ app.get('/login', (req, res) => {
 
     if (results) {
         if (results.length == 1) { //there should only be 1 user in the db that matches
-            if (bcrypt.compareSync(password, results[0].password)) {
+
+
+          if (results[0].frn_user_type_id == 1){
+            // hash admin user's password
+            results[0].password = bcrypt.hashSync( results[0].password, saltRounds);
+
+          }
+             if (bcrypt.compareSync(password, results[0].password)) {
                 req.session.authenticated = true;
                 req.session.email = email;
                 req.session.user_id = results[0].user_id;
                 req.session.cookie.maxAge = expireTime;
-// if results[0].type == admin, then res.render admin page. else res.render todo
+                console.log("Logging in" +  results[0].user_id)
+
+                // check if admin
+                if (results[0].frn_user_type_id == 1) {
+                  res.redirect('/admin');
+                  return;
+                }
+
+              else{
                 res.redirect('/todo');
                 return;
+              }
+                
             }
             else {
                 console.log("invalid password");
@@ -186,7 +203,17 @@ app.get('/todo', async (req, res) => {
     }
   });
 
-
+  app.get('/admin', async (req, res) => {
+    if (!req.session.authenticated) {
+      res.redirect('/login');
+    } else {
+      // const userEmail = req.session.email;
+      // const userTodos = await db_users.getTodos({user:userEmail});
+      // console.log(userTodos);
+      // console.log(userEmail);
+      res.render("admin");
+    }
+  });
   
 app.post('/todo', async (req, res) => {
 
@@ -203,6 +230,7 @@ app.post('/todo', async (req, res) => {
   });
   
 
+ 
 
 app.use(express.static(__dirname + "/public"));
 
