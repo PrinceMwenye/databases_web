@@ -95,10 +95,14 @@ app.post('/submitUser', async (req,res) => {
     var success = await db_users.createUser({ user: username, email:userEmail, hashedPassword: hashedPassword });
 
     if (success) {
-        var results = await db_users.getUsers();
-        console.log(results)
+      req.session.authenticated = true;
+      req.session.email = userEmail;
+      // req.session.user_id = results[0].user_id;
+      req.session.cookie.maxAge = expireTime;
 
-        res.render("todo",{users:results});
+      const userTodos = await db_users.getTodos({user:userEmail});
+      res.render("todo", { userEmail, todos:userTodos });
+        // res.render("todo", {userEmail:results[0].user});
     }
     else {
         res.render("errorMessage", {error: "Failed to create user."} );
@@ -150,7 +154,7 @@ app.get('/login', (req, res) => {
                 req.session.email = email;
                 req.session.user_id = results[0].user_id;
                 req.session.cookie.maxAge = expireTime;
-        
+// if results[0].type == admin, then res.render admin page. else res.render todo
                 res.redirect('/todo');
                 return;
             }
@@ -189,7 +193,7 @@ app.post('/todo', async (req, res) => {
     const userEmail = req.session.email;
     var description = req.body.description;
 
-
+    console.log("ERROR EMAIL" + userEmail)
     var result = await db_users.createTodo({ user: userEmail,  description:description });
     if (result) {
       res.redirect('/todo');
