@@ -30,7 +30,7 @@ async function createUser(postData) {
 
 async function getUsers() {
 	let getUsersSQL = `
-		SELECT username
+		SELECT user_id, username
 		FROM user;
 	`;
 	
@@ -73,6 +73,33 @@ async function getUser(postData) {
 		return false;
 	}
 }
+
+
+async function getTodoAdmin(postData){
+	let getTodosSQL = `
+
+
+	SELECT description FROM todo 
+	WHERE frn_user_id = :userid;
+	`;
+  
+	let params = {
+		userid: postData.userid
+	}
+  
+	try {
+	  const results = await database.query(getTodosSQL, params);
+  
+	  console.log("Successfully retrieved todos");
+	  console.log(results[0]);
+	  return results[0];
+	} catch (err) {
+	  console.log("Error getting todos");
+	  console.log(err);
+	  return false;
+	}
+  }
+
 
 async function getTodos(postData) {
 	let getTodosSQL = `
@@ -136,4 +163,4 @@ async function getTodos(postData) {
   
   
   
-module.exports = {createUser, getUsers, getUser, getTodos,  createTodo};
+module.exports = {createUser, getUsers, getUser, getTodos,  createTodo, getTodoAdmin};

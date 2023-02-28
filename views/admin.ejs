@@ -1,8 +1,16 @@
 
-  <h1>Admin Page</h1>
+  <!-- <h1>Admin Page</h1>
 <h2>You are logged in as Admin</h2>
 <ul>
   <% userNames.forEach((user) => { %>
     <li><a href="/user/<%= user.id %>"><%= user.username %></a></li>
     <% }); %>
+</ul> -->
+
+<h1>Admin Page</h1>
+<h2>You are logged in as Admin</h2>
+<ul>
+  <% userNames.forEach((user) => { %>
+    <li><a href="/user/<%= user.user_id %>"><%= user.username %></a></li>
+  <% }); %>
 </ul>
