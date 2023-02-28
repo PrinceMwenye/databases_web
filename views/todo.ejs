@@ -6,12 +6,12 @@
 <body>
 
   <% if (!isAdmin) { %>
-    <h1>Hello <%= userName %>!</h1>
+    <h1  style="color: red;">Hello <%= userName %>!</h1>
 
   <% } %>
 
   <% if (isAdmin) { %>
-    <h2>Logged in as Admin</h2>
+    <h2 style="color: blue;">Logged in as Admin</h2>
     <h2>Todos for <%= userName %>:</h2>
   <% } %>
 

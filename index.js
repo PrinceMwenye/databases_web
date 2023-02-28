@@ -69,22 +69,6 @@ app.get('/createUser', (req, res) => {
 
 
 
-// app.get('/createUser', (req,res) => {
-//     var errorMessage = req.query.error;
-
-//     var html = `
-//     ${errorMessage ? '<p style="color:red">' + errorMessage + '</p>' : ''}
-//     create user
-//     <form action='/submitUser' method='post'>
-//     <input name='username' type='text' placeholder='username'>
-//     <input name='email' type='email' placeholder='email'>
-//     <input name='password' type='password' placeholder='password'>
-//     <button>Submit</button>
-//     </form>
-//     `;
-//     res.send(html);
-// });
-
 app.post('/submitUser', async (req,res) => {
     var username = req.body.username;
     var password = req.body.password;
@@ -138,9 +122,7 @@ app.get('/login', (req, res) => {
     res.render('login', { title: 'Login', errorMessage });
   });
 
-
-
-
+-
 
   app.post('/loggingin', async (req,res) => {
     var email = req.body.email;
