@@ -207,11 +207,10 @@ app.get('/todo', async (req, res) => {
     if (!req.session.authenticated) {
       res.redirect('/login');
     } else {
-      // const userEmail = req.session.email;
-      // const userTodos = await db_users.getTodos({user:userEmail});
+      const userNames = await db_users.getUsers();
       // console.log(userTodos);
       // console.log(userEmail);
-      res.render("admin");
+      res.render("admin", {userNames});
     }
   });
   

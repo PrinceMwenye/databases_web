@@ -1,0 +1,6 @@
+<h1>You are logged in as Admin</h1>
+<ul>
+    <% userNames.forEach(function(user) { %>
+      <li><a href="/user/<%= user.username %>"><%= user.username %></a></li>
+    <% }); %>
+  </ul>

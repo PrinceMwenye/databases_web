@@ -28,9 +28,9 @@ async function createUser(postData) {
 	}
 }
 
-async function getUsers(postData) {
+async function getUsers() {
 	let getUsersSQL = `
-		SELECT username, password
+		SELECT username
 		FROM user;
 	`;
 	
@@ -47,6 +47,7 @@ async function getUsers(postData) {
 		return false;
 	}
 }
+
 
 async function getUser(postData) {
 	let getUserSQL = `
