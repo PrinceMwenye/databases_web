@@ -214,6 +214,19 @@ app.get('/todo', async (req, res) => {
     }
   });
   
+
+  app.get('/user/:id', async (req, res) => {
+    if (!req.session.authenticated) {
+      res.redirect('/login');
+    } else {
+      const userEmail = req.session.email;
+      const userId = req.params.id;
+      const user = userNames.find(user => user.id === userId);
+      const userTodos = await db_users.getTodos({username: user.username});
+      res.render("todo", {userEmail, todos: userTodos});
+    }
+  });
+  
 app.post('/todo', async (req, res) => {
 
     const userEmail = req.session.email;
