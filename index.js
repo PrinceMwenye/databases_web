@@ -196,10 +196,11 @@ app.get('/todo', async (req, res) => {
       res.redirect('/login');
     } else {
       const userEmail = req.session.email;
+      const userName = req.session.username;
       const userTodos = await db_users.getTodos({user:userEmail});
-      console.log(userTodos);
-      console.log(userEmail);
-      res.render("todo", { userEmail, todos:userTodos });
+      const isAdmin = (req.session.user_id == 1)
+      console.log(userName);
+      res.render("todo", { userName, isAdmin, todos:userTodos });
     }
   });
 
@@ -225,7 +226,7 @@ app.get('/todo', async (req, res) => {
       const userEmail = req.session.email;
       const id = req.params.id;
       console.log("CURRENT ID" + id);
-      const isAdmin = (req.session.user_id == 2)
+      const isAdmin = (req.session.user_id == 1)
       console.log(isAdmin)
       const userTodos = await db_users.getTodoAdmin({userid: id});
       res.render("todo", {id, userEmail, todos: userTodos, isAdmin});
