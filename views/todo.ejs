@@ -1,4 +1,4 @@
-<%- include("templates/header") %> 
+<!-- <%- include("templates/header") %> 
 
 
   <% if (!isAdmin) { %>
@@ -26,4 +26,36 @@
       <button type="submit">Add</button>
     </form>
   <% } %>
-  <%- include("templates/footer") %> 
+  <%- include("templates/footer") %>  -->
+
+<%- include("templates/header") %>
+
+<% if (!isAdmin) { %>
+
+  <h1 style="color: red;">Hello <%= userName %>!</h1>
+<% } %>
+<% if (isAdmin) { %>
+
+  <h2 style="color: blue;">Logged in as Admin</h2>
+  <h2>Todos for <%= userName %>:</h2>
+
+<% } %>
+<h2>Get these done!:</h2>
+<ul>
+  <% todos.forEach(function(todo) { %>
+    <li><%= todo.title %> <%= todo.description %> <%= todo.completed %></li>
+  <% }); %>
+</ul>
+
+<form action="/" method="POST">
+  <button type="submit">Sign Out</button>
+</form>
+<% if (!isAdmin) { %>
+
+  <h2>Add a New Todo</h2>
+  <form action="/todo" method="POST">
+    <input type="text" name="todo">
+    <button type="submit">Add</button>
+  </form>
+<% } %>
+<%- include("templates/footer") %>
