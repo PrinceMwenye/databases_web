@@ -47,9 +47,7 @@
   <% }); %>
 </ul>
 
-<form action="/" method="POST">
-  <button type="submit">Sign Out</button>
-</form>
+
 <% if (!isAdmin) { %>
 
   <h2>Add a New Todo</h2>
@@ -58,4 +56,8 @@
     <button type="submit">Add</button>
   </form>
 <% } %>
+
+<form action="/" method="POST">
+  <button type="submit">Sign Out</button>
+</form>
 <%- include("templates/footer") %>
